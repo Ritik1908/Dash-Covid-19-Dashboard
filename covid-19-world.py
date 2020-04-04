@@ -40,6 +40,21 @@ eachDayRecords = total.iloc[:,4:].sum().tolist()
 # For Bar Graph
 forBarGraphEachDayRecords = np.ediff1d(eachDayRecords, to_begin=eachDayRecords[0])
 
+# For Death and Recovered Plot
+eachDayRecovered = recovered.iloc[:,4:].sum().tolist()
+eachDayDeath = deaths.iloc[:,4:].sum().tolist()
+
+# To Remove Duplicate Values
+def unique(x):
+  return list(dict.fromkeys(x))
+country = total["Country/Region"].tolist()
+country = unique(country)
+
+options2 = []
+for i in country:
+    options2.append({'label':i, 'value':i})
+
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
@@ -104,13 +119,97 @@ app.layout = html.Div([
                 dcc.Graph(id='totalCaseGraph')
             ], className="col-md-6 padding-align"),
 
-            html.Div([], className="col-md-6 padding-align")
+            # Graph showing rise in death and recovery
+            html.Div([
+                dcc.Graph(figure={
+                    'data' : [
+                        go.Scatter(
+                            x=dates,
+                            y=eachDayRecovered,
+                            mode='lines+markers',
+                            marker={'color': 'green'},
+                            name='Recovered'
+                        ),
+                        go.Scatter(
+                            x=dates,
+                            y=eachDayDeath,
+                            mode='lines+markers',
+                            marker={'color': 'red'},
+                            name='Death'
+                        )
+                    ],
+                    'layout': go.Layout({
+                        'title': 'Death vs Recovery'
+                    })
+                })
+            ], className="col-md-6 padding-align")
 
         ], className="row")
-    ], className="container")
+    ], className="container"),
 
+    html.Hr(),
+
+    html.H2("Country/Region Wise Graphical Analysis"),
+
+    # For Country Wise Analysis
+    html.Div([
+
+        # Drop Down To Control All Type Of Graph
+        html.Div([
+            html.Div([
+                dcc.Dropdown(id="country", options=options2, value="All")
+            ], className="col-12")
+        ], className="row"),
+
+        # For Total Number Of Active Cases
+        html.Div([
+
+            # Bar
+            html.Div([
+                dcc.Graph(id='displayBarTotal')
+            ], className="col-6 padding-align"),
+
+            # Linear
+            html.Div([
+                dcc.Graph(id='displayLinearTotal')
+            ], className="col-6 padding-align")
+
+        ], className="row"),
+
+        # For Total Number Of Recovered Cases
+        html.Div([
+
+            # Bar
+            html.Div([
+                dcc.Graph(id='displayBarRecovered')
+            ], className="col-6 padding-align"),
+
+            # Linear
+            html.Div([
+                dcc.Graph(id='displayLinearRecovered')
+            ], className="col-6 padding-align")
+
+        ], className="row"),
+
+        # For Total Number Of Death Cases
+        html.Div([
+
+            # Bar
+            html.Div([
+                dcc.Graph(id='displayBarDeath')
+            ], className="col-6 padding-align"),
+
+            # Linear
+            html.Div([
+                dcc.Graph(id='displayLinearDeath')
+            ], className="col-6 padding-align")
+
+        ], className="row")
+
+    ], className="container")
 ])
 
+# Graph Selector For Total Number Of Cases
 @app.callback(Output('totalCaseGraph', 'figure'), [Input('totalCaseGraphType', 'value')])
 def totalcasegraphplot(type) :
     if(type == "Total Cases (Logarithm)"):
@@ -146,6 +245,185 @@ def totalcasegraphplot(type) :
             )],
             'layout': go.Layout({
                 'title': 'Daily New Cases'
+            })
+        }
+
+# Bar Graph For Total Cases
+@app.callback(Output('displayBarTotal', 'figure'), [Input('country', 'value')])
+def displayBarTotal(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Bar(
+                x=dates,
+                y=forBarGraphEachDayRecords
+            )],
+            'layout': go.Layout({
+                'title': 'Daily New Cases'
+            })
+        }
+    else:
+        xD = total[total["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
+        return {
+
+            'data': [go.Bar(
+                x=dates,
+                y=forBarGraph
+            )],
+            'layout': go.Layout({
+                'title': 'Daily New Cases'
+            })
+        }
+
+# Linear Graph For Total Cases
+@app.callback(Output('displayLinearTotal', 'figure'), [Input('country', 'value')])
+def dispLinearTotal(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDayRecords,
+                mode='lines+markers',
+            )],
+            'layout': go.Layout({
+                'title': 'New Cases Trend'
+            })
+        }
+    else:
+        xD = total[total["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        return {
+
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDay,
+                mode='lines+markers',
+            )],
+            'layout': go.Layout({
+                'title': 'Daily New Cases Trend'
+            })
+        }
+
+# Bar Graph For Recovery Rate
+@app.callback(Output('displayBarRecovered', 'figure'), [Input('country', 'value')])
+def displayBarRecovered(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Bar(
+                x=dates,
+                y=np.ediff1d(eachDayRecovered, to_begin=eachDayRecovered[0]),
+                marker={'color':'green'}
+            )],
+            'layout': go.Layout({
+                'title': 'Daily Recovery'
+            })
+        }
+    else:
+        xD = recovered[recovered["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
+        return {
+
+            'data': [go.Bar(
+                x=dates,
+                y=forBarGraph,
+                marker={'color': 'green'}
+            )],
+            'layout': go.Layout({
+                'title': 'Daily Recovery'
+            })
+        }
+
+# Linear Graph For Recovery Rate
+@app.callback(Output('displayLinearRecovered', 'figure'), [Input('country', 'value')])
+def dispLinearRecovered(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDayRecovered,
+                mode='lines+markers',
+                marker={'color': 'green'}
+            )],
+            'layout': go.Layout({
+                'title': 'Recovery Trend'
+            })
+        }
+    else:
+        xD = recovered[recovered["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        return {
+
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDay,
+                mode='lines+markers',
+                marker={'color': 'green'}
+            )],
+            'layout': go.Layout({
+                'title': 'Recovery Trend'
+            })
+        }
+
+# Bar Graph For Death Rate
+@app.callback(Output('displayBarDeath', 'figure'), [Input('country', 'value')])
+def displayBarDeath(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Bar(
+                x=dates,
+                y=np.ediff1d(eachDayDeath, to_begin=eachDayDeath[0]),
+                marker={'color':'red'}
+            )],
+            'layout': go.Layout({
+                'title': 'Daily Death'
+            })
+        }
+    else:
+        xD = deaths[deaths["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
+        return {
+
+            'data': [go.Bar(
+                x=dates,
+                y=forBarGraph,
+                marker={'color': 'red'}
+            )],
+            'layout': go.Layout({
+                'title': 'Daily Death'
+            })
+        }
+
+# Linear Graph For Death Rate
+@app.callback(Output('displayLinearDeath', 'figure'), [Input('country', 'value')])
+def dispLinearDeath(type) :
+    if(type == "All"):
+        return {
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDayDeath,
+                mode='lines+markers',
+                marker={'color': 'red'}
+            )],
+            'layout': go.Layout({
+                'title': 'Death Trend'
+            })
+        }
+    else:
+        xD = deaths[deaths["Country/Region"] == type]
+        eachDay = xD.iloc[:, 4:].sum().tolist()
+        return {
+
+            'data': [go.Scatter(
+                x=dates,
+                y=eachDay,
+                mode='lines+markers',
+                marker={'color': 'green'}
+            )],
+            'layout': go.Layout({
+                'title': 'Death Trend'
             })
         }
 
