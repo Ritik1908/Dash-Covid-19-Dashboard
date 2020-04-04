@@ -1,7 +1,25 @@
 body {
     background-color: black;
 }
+
 h1 {
+    text-decoration: underline;
+    margin: 2% auto;
     color: white;
     text-align: center;
+}
+
+hr {
+    margin-top: 2%;
+    border-rounded: 30%;
+    background-color: #ccc;
+    width: 50%;
+}
+
+.col-md-3{
+    padding: 1%;
+}
+
+.padding-align {
+    padding: 5%;
 }
