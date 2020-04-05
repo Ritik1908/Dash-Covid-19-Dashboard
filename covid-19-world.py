@@ -326,7 +326,7 @@ def totalcasegraphplot(type) :
             })
         }
 
-# Bar Graph For Total Cases
+# Bar Graph For Total Cases Countrywise
 @app.callback(Output('displayBarTotal', 'figure'), [Input('country', 'value')])
 def displayBarTotal(type) :
     if(type == "All"):
@@ -340,7 +340,8 @@ def displayBarTotal(type) :
             })
         }
     else:
-        xD = total[total["Country/Region"] == type]
+        xD = total.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
         return {
@@ -369,7 +370,8 @@ def dispLinearTotal(type) :
             })
         }
     else:
-        xD = total[total["Country/Region"] == type]
+        xD = total.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         return {
 
@@ -398,7 +400,8 @@ def displayBarRecovered(type) :
             })
         }
     else:
-        xD = recovered[recovered["Country/Region"] == type]
+        xD = recovered.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
         return {
@@ -429,7 +432,8 @@ def dispLinearRecovered(type) :
             })
         }
     else:
-        xD = recovered[recovered["Country/Region"] == type]
+        xD = recovered.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         return {
 
@@ -459,7 +463,8 @@ def displayBarDeath(type) :
             })
         }
     else:
-        xD = deaths[deaths["Country/Region"] == type]
+        xD = deaths.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         forBarGraph = np.ediff1d(eachDay, to_begin=eachDay[0])
         return {
@@ -490,7 +495,8 @@ def dispLinearDeath(type) :
             })
         }
     else:
-        xD = deaths[deaths["Country/Region"] == type]
+        xD = deaths.groupby(["Country/Region"])
+        xD = xD.get_group(type)
         eachDay = xD.iloc[:, 4:].sum().tolist()
         return {
 
