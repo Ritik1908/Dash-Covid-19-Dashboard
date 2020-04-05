@@ -54,6 +54,32 @@ options2 = []
 for i in country:
     options2.append({'label':i, 'value':i})
 
+totalX = total.groupby("Country/Region").sum().reset_index()
+recoveredX = recovered.groupby("Country/Region").sum().reset_index()
+deathX = deaths.groupby("Country/Region").sum().reset_index()
+
+newCases = (totalX.iloc[:,-1]-totalX.iloc[:,-2]).tolist()
+newDeaths = (deathX.iloc[:,-1]-deathX.iloc[:,-2]).tolist()
+newRecovery = (recoveredX.iloc[:,-1]-recoveredX.iloc[:,-2]).tolist()
+
+totalY = pd.DataFrame(zip(totalX["Country/Region"].tolist(), totalX.iloc[:,-1].tolist(), newCases))
+deathsY = pd.DataFrame(zip(deathX["Country/Region"].tolist(), deathX.iloc[:,-1].tolist(), newDeaths))
+recoveryY = pd.DataFrame(zip(recoveredX["Country/Region"].tolist(), recoveredX.iloc[:,-1].tolist(), newRecovery))
+
+newData = totalY.merge(deathsY, how="inner", left_on=0, right_on=0)
+newData = newData.merge(recoveryY, how="inner", left_on=0, right_on=0)
+
+listTab = []
+for index, row in newData.iterrows():
+    listX = []
+    listX.append(html.Td(row[0]))
+    listX.append(html.Td(row['1_x'], className="blue"))
+    listX.append(html.Td(row['2_x'], className="blue"))
+    listX.append(html.Td(row['1_y'], className="red"))
+    listX.append(html.Td(row['2_y'], className="red"))
+    listX.append(html.Td(row[1], className="green"))
+    listX.append(html.Td(row[2], className="green"))
+    listTab.append(html.Tr(listX))
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -206,7 +232,32 @@ app.layout = html.Div([
 
         ], className="row")
 
-    ], className="container")
+    ], className="container"),
+
+    html.Hr(),
+
+    html.Div([
+        html.H3("Country Wise Records"),
+        html.Table([
+            html.Thead([
+                html.Tr([
+                    html.Td("Country"),
+                    html.Td("Total Cases"),
+                    html.Td("New Cases"),
+                    html.Td("Total Deaths"),
+                    html.Td("New Deaths"),
+                    html.Td("Total Recovery"),
+                    html.Td("New Recovery")
+                ])
+            ], className='thead-dark'),
+
+            html.Tbody(listTab)
+        ], className="table table-striped")
+    ], className="container switch-background"),
+
+    html.Hr(),
+
+    html.H2("® Ritik Verma ®")
 ])
 
 # Graph Selector For Total Number Of Cases

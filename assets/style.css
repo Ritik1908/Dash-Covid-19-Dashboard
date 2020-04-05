@@ -2,10 +2,16 @@ body {
     background-color: black;
 }
 
-h1, h2 {
+h1, h2{
     text-decoration: underline;
     margin: 2% auto;
     color: white;
+    text-align: center;
+}
+
+h3 {
+    text-decoration: underline;
+    margin: 2% auto;
     text-align: center;
 }
 
@@ -22,4 +28,25 @@ hr {
 
 .padding-align {
     padding: 2%;
+}
+
+.switch-background {
+    background-color: white;
+    color: black;
+}
+
+.table {
+    text-align: center;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.blue {
+    color: blue;
 }
