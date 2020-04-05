@@ -82,8 +82,33 @@ for index, row in newData.iterrows():
     listX.append(html.Td(row[2], className="green"))
     listTab.append(html.Tr(listX))
 
+
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
+
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Graphical Analysis of covid-19(corona virus)">
+        <meta name="keywords" content="Covid-19, covid19, corona, coronavirus, statistics, count">
+        <title>Covid-19</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
 
 app.layout = html.Div([
 
