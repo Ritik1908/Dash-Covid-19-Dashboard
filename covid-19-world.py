@@ -68,6 +68,7 @@ recoveryY = pd.DataFrame(zip(recoveredX["Country/Region"].tolist(), recoveredX.i
 
 newData = totalY.merge(deathsY, how="inner", left_on=0, right_on=0)
 newData = newData.merge(recoveryY, how="inner", left_on=0, right_on=0)
+newData = newData.sort_values(by=['1_x'], ascending=False)
 
 listTab = []
 for index, row in newData.iterrows():
