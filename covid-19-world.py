@@ -220,12 +220,12 @@ app.layout = html.Div([
             # Bar
             html.Div([
                 dcc.Graph(id='displayBarTotal')
-            ], className="col-6 padding-align"),
+            ], className="col-md-6 padding-align"),
 
             # Linear
             html.Div([
                 dcc.Graph(id='displayLinearTotal')
-            ], className="col-6 padding-align")
+            ], className="col-md-6 padding-align")
 
         ], className="row"),
 
@@ -235,12 +235,12 @@ app.layout = html.Div([
             # Bar
             html.Div([
                 dcc.Graph(id='displayBarRecovered')
-            ], className="col-6 padding-align"),
+            ], className="col-md-6 padding-align"),
 
             # Linear
             html.Div([
                 dcc.Graph(id='displayLinearRecovered')
-            ], className="col-6 padding-align")
+            ], className="col-md-6 padding-align")
 
         ], className="row"),
 
@@ -250,12 +250,12 @@ app.layout = html.Div([
             # Bar
             html.Div([
                 dcc.Graph(id='displayBarDeath')
-            ], className="col-6 padding-align"),
+            ], className="col-md-6 padding-align"),
 
             # Linear
             html.Div([
                 dcc.Graph(id='displayLinearDeath')
-            ], className="col-6 padding-align")
+            ], className="col-md-6 padding-align")
 
         ], className="row")
 
@@ -280,7 +280,7 @@ app.layout = html.Div([
 
             html.Tbody(listTab)
         ], className="table table-striped")
-    ], className="container switch-background"),
+    ], className="container switch-background table-overflow"),
 
     html.Hr(),
 

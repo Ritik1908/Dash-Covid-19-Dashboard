@@ -50,3 +50,7 @@ hr {
 .blue {
     color: blue;
 }
+
+.table-overflow {
+    overflow-x: auto;
+}
